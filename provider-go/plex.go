@@ -100,7 +100,6 @@ type PlexRating struct {
 }
 
 func ProviderDocument(settings Settings) ProviderResponse {
-	prefix := settings.PathPrefix()
 	return ProviderResponse{MediaProvider: MediaProvider{
 		Identifier: settings.ProviderIdentifier,
 		Title:      settings.ProviderTitle,
@@ -110,8 +109,8 @@ func ProviderDocument(settings Settings) ProviderResponse {
 			Scheme: []map[string]any{{"scheme": settings.ProviderIdentifier}},
 		}},
 		Feature: []ProviderFeature{
-			{Type: "metadata", Key: prefixedPath(prefix, metadataPath)},
-			{Type: "match", Key: prefixedPath(prefix, matchPath)},
+			{Type: "metadata", Key: metadataPath},
+			{Type: "match", Key: matchPath},
 		},
 	}}
 }
@@ -134,14 +133,6 @@ func ImageContainer(identifier string, images []Image) MediaContainerResponse {
 		Size:       len(images),
 		Image:      images,
 	}}
-}
-
-func prefixedPath(prefix, p string) string {
-	prefix = strings.TrimRight(prefix, "/")
-	if prefix == "" {
-		return p
-	}
-	return prefix + p
 }
 
 func requestPath(rawPath string, settings Settings) (string, bool) {

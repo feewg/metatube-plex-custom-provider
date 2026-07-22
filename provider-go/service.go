@@ -160,7 +160,7 @@ func (s *Service) searchResultToMetadata(r *http.Request, movie *model.MovieSear
 	thumb := absoluteURL(r, s.settings, "images/movie/primary", ratingKey)
 	return Metadata{
 		RatingKey:             ratingKey,
-		Key:                   prefixedPath(s.settings.PathPrefix(), metadataPath+"/"+ratingKey),
+		Key:                   metadataPath + "/" + ratingKey,
 		GUID:                  s.guid(ratingKey),
 		Type:                  "movie",
 		Title:                 title,
@@ -189,7 +189,7 @@ func (s *Service) mergedSearchResultToMetadata(r *http.Request, movies []*model.
 	}
 	return Metadata{
 		RatingKey:             ratingKey,
-		Key:                   prefixedPath(s.settings.PathPrefix(), metadataPath+"/"+ratingKey),
+		Key:                   metadataPath + "/" + ratingKey,
 		GUID:                  s.guid(ratingKey),
 		Type:                  "movie",
 		Title:                 title,
@@ -212,7 +212,7 @@ func (s *Service) movieToMetadata(r *http.Request, movie *model.MovieInfo, ref P
 
 	metadata := Metadata{
 		RatingKey:             ratingKey,
-		Key:                   prefixedPath(s.settings.PathPrefix(), metadataPath+"/"+ratingKey),
+		Key:                   metadataPath + "/" + ratingKey,
 		GUID:                  s.guid(ratingKey),
 		Type:                  "movie",
 		Title:                 title,
