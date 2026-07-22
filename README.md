@@ -69,9 +69,7 @@ go build -o metatube-plex-provider .
 
 ## Docker
 
-GitHub Actions publishes only the Go provider image for `linux/amd64` and
-`linux/arm64`. Every workflow run resolves the newest SDK `main` commit directly
-from GitHub and passes that exact revision into the Docker build.
+The Go provider image supports `linux/amd64` and `linux/arm64`.
 
 ```sh
 docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
@@ -81,11 +79,6 @@ docker run --rm -p 8080:8080 \
   -e METATUBE_AUTH_TOKEN='replace-with-a-random-token' \
   ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 ```
-
-The earlier Python provider image is no longer built by GitHub Actions. A
-ready-to-run Compose example and environment template are available in
-[`provider-go/docker-compose.yml`](./provider-go/docker-compose.yml) and
-[`provider-go/.env.example`](./provider-go/.env.example).
 
 ## Run
 
@@ -186,7 +179,6 @@ curl http://127.0.0.1:8080/_metatube/<token>/health
 ## Troubleshooting
 
 - If module downloads fail in restricted environments, set an accessible `GOPROXY` or use your internal Go proxy.
-- If the newest SDK `main` revision introduces an incompatible API, the Docker workflow fails before publishing an image and reports the exact SDK revision in the build metadata.
 
 ## License and Attribution
 

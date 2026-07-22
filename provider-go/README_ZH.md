@@ -20,7 +20,7 @@ http://host:8080/_metatube/replace-with-a-random-token
 
 ## Docker
 
-GitHub Actions 只构建 Go Provider，并发布 `linux/amd64`、`linux/arm64` 镜像：
+Go Provider 镜像支持 `linux/amd64`、`linux/arm64`：
 
 ```sh
 docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
@@ -31,18 +31,13 @@ docker run --rm -p 8080:8080 \
   ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 ```
 
-容器内 SQLite 数据库默认保存在 `/data/metatube-provider-go.db`。GitHub Actions
-每次构建都会解析 `metatube-sdk-go` 的 GitHub `main` 分支最新提交，不依赖本地
-SDK 路径。也可以在仓库根目录本地构建：
+容器内 SQLite 数据库默认保存在 `/data/metatube-provider-go.db`。在仓库根目录本地构建：
 
 ```sh
 docker build -t metatube-provider-go ./provider-go
 ```
 
 ### Docker Compose
-
-Compose 示例位于 [`docker-compose.yml`](./docker-compose.yml)。先基于
-[`.env.example`](./.env.example) 准备 `.env`，并替换其中的路径鉴权 token：
 
 ```sh
 cd provider-go

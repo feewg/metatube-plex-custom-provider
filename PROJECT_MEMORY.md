@@ -11,9 +11,8 @@
 - `provider-go/`
   - Go 单体版 Plex Provider，当前正式使用。
   - 通过 GitHub Go 模块路径引用 `metatube-community/metatube-sdk-go`，不使用本地 `replace`。
-  - Docker workflow 每次构建时解析 SDK `main` 的最新提交 SHA。
 - `provider/`
-  - 旧的 Python Provider 实现，保留用于回滚或对照，不再由 GitHub Actions 打包。
+  - 旧的 Python Provider 实现，保留用于回滚或对照。
 
 ## 正式部署
 

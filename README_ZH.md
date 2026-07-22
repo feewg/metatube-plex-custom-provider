@@ -66,9 +66,7 @@ go build -o metatube-plex-provider .
 
 ## Docker
 
-GitHub Actions 后续只发布 Go Provider 镜像，支持 `linux/amd64` 和
-`linux/arm64`。每次运行都会直接从 GitHub 解析 SDK `main` 的最新提交，并把该
-提交 SHA 传给 Docker 构建。
+Go Provider 镜像支持 `linux/amd64` 和 `linux/arm64`。
 
 ```sh
 docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
@@ -78,10 +76,6 @@ docker run --rm -p 8080:8080 \
   -e METATUBE_AUTH_TOKEN='replace-with-a-random-token' \
   ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 ```
-
-旧 Python Provider 镜像不再由 GitHub Actions 构建。可直接使用的 Compose 示例和
-环境变量模板分别位于 [`provider-go/docker-compose.yml`](./provider-go/docker-compose.yml)
-和 [`provider-go/.env.example`](./provider-go/.env.example)。
 
 ## 运行
 
