@@ -60,6 +60,18 @@ docker run --rm -p 8080:8080 \
   metatube-provider
 ```
 
+GitHub Actions builds `linux/amd64` and `linux/arm64` images. Pull requests only
+verify the build; pushes to `main` and tags starting with `v` publish the image
+to GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/feewg/metatube-plex-custom-provider:latest
+```
+
+Version tags such as `v1.2.3` also publish `v1.2.3`, `1.2.3`, and `1.2` image
+tags. To allow anonymous pulls, set the package visibility to public in the
+repository owner's GitHub Packages settings.
+
 ## Register in Plex
 
 Plex Media Server 1.43.0 or newer is required.
