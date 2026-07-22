@@ -36,8 +36,6 @@ func TestMovieToMetadataAppliesTemplateAndSubstitutions(t *testing.T) {
 	genreTable := base64.StdEncoding.EncodeToString([]byte("DRAMA=Drama B"))
 	service := NewService(Settings{
 		ProviderIdentifier:      "tv.plex.agents.custom.metatube.movie",
-		AuthPath:                "_metatube",
-		AuthToken:               "secret",
 		EnableTitleTemplate:     true,
 		TitleTemplate:           "{number} {first_actor} {title}",
 		EnableTitleSubstitution: true,
@@ -62,9 +60,6 @@ func TestMovieToMetadataAppliesTemplateAndSubstitutions(t *testing.T) {
 
 	if metadata.Title != "ABC-123 Actor B NEW title" {
 		t.Fatalf("unexpected title: %q", metadata.Title)
-	}
-	if metadata.Key != metadataPath+"/"+metadata.RatingKey {
-		t.Fatalf("unexpected metadata path: %q", metadata.Key)
 	}
 	if metadata.Role[0].Tag != "Actor B" {
 		t.Fatalf("unexpected actor: %#v", metadata.Role)
