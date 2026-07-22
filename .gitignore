@@ -157,4 +157,5 @@ cython_debug/
 
 # Test files
 *.sqlite
+provider-go/data/
 *test.py

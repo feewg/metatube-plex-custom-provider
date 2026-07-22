@@ -72,7 +72,7 @@ Go Provider 镜像支持 `linux/amd64` 和 `linux/arm64`。
 docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 
 docker run --rm -p 8080:8080 \
-  -v metatube-provider-go-data:/data \
+  -v "$PWD/data:/data" \
   -e METATUBE_AUTH_TOKEN='replace-with-a-random-token' \
   ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 ```

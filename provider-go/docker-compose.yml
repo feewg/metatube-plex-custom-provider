@@ -7,7 +7,4 @@ services:
     environment:
       METATUBE_AUTH_TOKEN: replace-with-a-long-random-token
     volumes:
-      - metatube-provider-go-data:/data
-
-volumes:
-  metatube-provider-go-data:
+      - ./data:/data

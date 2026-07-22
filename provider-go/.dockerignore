@@ -2,5 +2,6 @@
 .env*
 *.db
 *.sqlite
+data/
 README.md
 README_ZH.md
