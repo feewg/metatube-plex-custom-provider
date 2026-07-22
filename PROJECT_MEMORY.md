@@ -10,11 +10,10 @@
 
 - `provider-go/`
   - Go 单体版 Plex Provider，当前正式使用。
-  - 通过 `replace github.com/metatube-community/metatube-sdk-go => ../../metatube-sdk-go` 复用本地 SDK。
+  - 通过 GitHub Go 模块路径引用 `metatube-community/metatube-sdk-go`，不使用本地 `replace`。
+  - Docker workflow 每次构建时解析 SDK `main` 的最新提交 SHA。
 - `provider/`
-  - 旧的 Python Provider 实现，保留用于回滚或对照。
-- `/home/plex/metatube-sdk-go`
-  - 本地克隆的 MetaTube SDK/后端代码，Go Provider 直接引用它的 engine。
+  - 旧的 Python Provider 实现，保留用于回滚或对照，不再由 GitHub Actions 打包。
 
 ## 正式部署
 
@@ -207,6 +206,6 @@ JUQ-907
 
 - 不要重新启动旧的 `metatube-backend`，当前架构不再需要它。
 - 旧 Python Provider 仍在 `provider/`，不要删除，除非明确确认不再需要回滚。
-- Go 单体版依赖本地 `/home/plex/metatube-sdk-go`，移动目录前需要同步修改 `provider-go/go.mod` 的 `replace`。
+- Go 单体版直接从 GitHub 下载 SDK；本地构建和 Docker 构建都不能加入指向仓库外目录的 `replace`。
 - 反代公网暴露时必须使用 HTTPS，因为路径 token 会出现在 URL 中。
 - 服务只监听 `127.0.0.1` 是刻意设计，公网入口应全部走反向代理。

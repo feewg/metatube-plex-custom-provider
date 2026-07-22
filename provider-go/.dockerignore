@@ -1,0 +1,5 @@
+.git
+*.db
+*.sqlite
+README.md
+README_ZH.md

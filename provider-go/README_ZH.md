@@ -18,6 +18,27 @@ Provider 注册地址：
 http://host:8080/_metatube/replace-with-a-random-token
 ```
 
+## Docker
+
+GitHub Actions 只构建 Go Provider，并发布 `linux/amd64`、`linux/arm64` 镜像：
+
+```sh
+docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
+
+docker run --rm -p 8080:8080 \
+  -v metatube-provider-go-data:/data \
+  -e METATUBE_AUTH_TOKEN=replace-with-a-random-token \
+  ghcr.io/feewg/metatube-plex-custom-provider-go:latest
+```
+
+容器内 SQLite 数据库默认保存在 `/data/metatube-provider-go.db`。GitHub Actions
+每次构建都会解析 `metatube-sdk-go` 的 GitHub `main` 分支最新提交，不依赖本地
+SDK 路径。也可以在仓库根目录本地构建：
+
+```sh
+docker build -t metatube-provider-go ./provider-go
+```
+
 ## 配置
 
 - `METATUBE_HOST`：监听地址，默认 `127.0.0.1`

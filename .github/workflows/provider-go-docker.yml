@@ -1,4 +1,4 @@
-name: Build provider Docker image
+name: Build provider-go Docker image
 
 on:
   push:
@@ -7,14 +7,14 @@ on:
     tags:
       - "v*"
     paths:
-      - "provider/**"
-      - ".github/workflows/provider-docker.yml"
+      - "provider-go/**"
+      - ".github/workflows/provider-go-docker.yml"
   pull_request:
     branches:
       - main
     paths:
-      - "provider/**"
-      - ".github/workflows/provider-docker.yml"
+      - "provider-go/**"
+      - ".github/workflows/provider-go-docker.yml"
   workflow_dispatch:
 
 permissions:
@@ -22,12 +22,13 @@ permissions:
   packages: write
 
 concurrency:
-  group: provider-docker-${{ github.ref }}
+  group: provider-go-docker-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}-go
+  SDK_REPOSITORY: https://github.com/metatube-community/metatube-sdk-go.git
 
 jobs:
   build:
@@ -37,6 +38,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Resolve latest MetaTube SDK revision
+        id: sdk
+        shell: bash
+        run: |
+          revision="$(git ls-remote "${SDK_REPOSITORY}" refs/heads/main | awk '{print $1}')"
+          if [[ -z "${revision}" ]]; then
+            echo "Unable to resolve the MetaTube SDK main branch" >&2
+            exit 1
+          fi
+          echo "revision=${revision}" >> "${GITHUB_OUTPUT}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -69,11 +81,15 @@ jobs:
       - name: Build and publish image
         uses: docker/build-push-action@v6
         with:
-          context: ./provider
-          file: ./provider/Dockerfile
+          context: ./provider-go
+          file: ./provider-go/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            METATUBE_SDK_VERSION=${{ steps.sdk.outputs.revision }}
           tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          labels: |
+            ${{ steps.metadata.outputs.labels }}
+            io.metatube.sdk.revision=${{ steps.sdk.outputs.revision }}
+          cache-from: type=gha,scope=provider-go
+          cache-to: type=gha,mode=max,scope=provider-go

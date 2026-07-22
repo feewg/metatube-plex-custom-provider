@@ -4,7 +4,7 @@
 
 A standalone MetaTube scraper service for the **Plex Custom Metadata Providers API**.
 
-This project extracts the Plex plugin workflow from `metatube-community/metatube-plex-plugins` and ships it as an HTTP provider. It embeds the scraping engine from `metatube-community/metatube-sdk-go` directly under `provider-go/`, so Plex can call this provider service directly without deploying a separate MetaTube API server.
+This project extracts the Plex plugin workflow from `metatube-community/metatube-plex-plugins` and ships it as an HTTP provider. It imports the scraping engine from the GitHub-hosted `metatube-community/metatube-sdk-go` module, so Plex can call this provider service directly without deploying a separate MetaTube API server.
 
 For source attribution and license details, see [ATTRIBUTION.md](./ATTRIBUTION.md).
 
@@ -45,31 +45,44 @@ ATTRIBUTION.md          Upstream source and SDK attribution
 PROJECT_MEMORY.md       Project maintenance notes
 ```
 
-## Prerequisites
+## SDK Dependency
 
-`provider-go/go.mod` uses a local replace directive for `metatube-sdk-go`.
+`provider-go/go.mod` references `metatube-sdk-go` through its GitHub module path;
+no sibling checkout or local `replace` directive is required. The checked-in
+pseudo-version records the upstream `main` revision used for local tests.
 
-Recommended local directory layout:
+To refresh a local checkout to the newest upstream SDK revision:
 
-```text
-workspace/
-  metatube-sdk-go/
-  metatube-plex-custom-provider/
-```
-
-If your layout differs, update this entry in [`provider-go/go.mod`](./provider-go/go.mod):
-
-```go
-replace github.com/metatube-community/metatube-sdk-go => ../../metatube-sdk-go
+```sh
+cd provider-go
+go get github.com/metatube-community/metatube-sdk-go@main
+go mod tidy
 ```
 
 ## Build
 
 ```sh
-cd workspace/metatube-plex-custom-provider/provider-go
+cd provider-go
 go test ./...
 go build -o metatube-plex-provider .
 ```
+
+## Docker
+
+GitHub Actions publishes only the Go provider image for `linux/amd64` and
+`linux/arm64`. Every workflow run resolves the newest SDK `main` commit directly
+from GitHub and passes that exact revision into the Docker build.
+
+```sh
+docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
+
+docker run --rm -p 8080:8080 \
+  -v metatube-provider-go-data:/data \
+  -e METATUBE_AUTH_TOKEN='replace-with-a-random-token' \
+  ghcr.io/feewg/metatube-plex-custom-provider-go:latest
+```
+
+The earlier Python provider image is no longer built by GitHub Actions.
 
 ## Run
 
@@ -169,8 +182,8 @@ curl http://127.0.0.1:8080/_metatube/<token>/health
 
 ## Troubleshooting
 
-- If `go test` fails with `replacement directory ../../metatube-sdk-go does not exist`, fix the local repo layout or update the `replace` directive in `provider-go/go.mod`.
 - If module downloads fail in restricted environments, set an accessible `GOPROXY` or use your internal Go proxy.
+- If the newest SDK `main` revision introduces an incompatible API, the Docker workflow fails before publishing an image and reports the exact SDK revision in the build metadata.
 
 ## License and Attribution
 

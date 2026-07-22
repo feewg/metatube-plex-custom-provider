@@ -2,7 +2,7 @@
 
 这是一个面向 Plex Custom Metadata Providers API 的 MetaTube 刮削器。
 
-项目把 `metatube-community/metatube-plex-plugins` 的 Plex 插件逻辑迁移成独立 HTTP Provider，并把 `metatube-community/metatube-sdk-go` 的刮削引擎整合进 `provider-go/`。运行时不再需要单独部署 MetaTube API Server，Plex 只需要访问这个 Provider 服务。
+项目把 `metatube-community/metatube-plex-plugins` 的 Plex 插件逻辑迁移成独立 HTTP Provider，并通过 GitHub 上的 `metatube-community/metatube-sdk-go` Go 模块整合刮削引擎。运行时不再需要单独部署 MetaTube API Server，Plex 只需要访问这个 Provider 服务。
 
 代码来源和许可说明见 [ATTRIBUTION.md](./ATTRIBUTION.md)。
 
@@ -43,25 +43,43 @@ ATTRIBUTION.md        上游代码和 SDK 引用说明
 PROJECT_MEMORY.md     项目维护记录
 ```
 
-## 构建
+## SDK 依赖
 
-`provider-go/go.mod` 通过 `replace` 引用本地 `metatube-sdk-go`。请把两个仓库放在同一个父目录下：
+`provider-go/go.mod` 直接使用 GitHub 模块路径引用 `metatube-sdk-go`，不再需要同级
+SDK 仓库或本地 `replace`。仓库内的伪版本记录本地测试所使用的上游 `main` 提交。
 
-```text
-workspace/
-  metatube-sdk-go/
-  metatube-plex-custom-provider/
-```
-
-然后构建：
+需要把本地依赖更新到上游最新 SDK 时执行：
 
 ```sh
-cd workspace/metatube-plex-custom-provider/provider-go
+cd provider-go
+go get github.com/metatube-community/metatube-sdk-go@main
+go mod tidy
+```
+
+## 构建
+
+```sh
+cd provider-go
 go test ./...
 go build -o metatube-plex-provider .
 ```
 
-如果你的 SDK 放在其他位置，修改 [`provider-go/go.mod`](./provider-go/go.mod) 里的 `replace github.com/metatube-community/metatube-sdk-go => ../../metatube-sdk-go`。
+## Docker
+
+GitHub Actions 后续只发布 Go Provider 镜像，支持 `linux/amd64` 和
+`linux/arm64`。每次运行都会直接从 GitHub 解析 SDK `main` 的最新提交，并把该
+提交 SHA 传给 Docker 构建。
+
+```sh
+docker pull ghcr.io/feewg/metatube-plex-custom-provider-go:latest
+
+docker run --rm -p 8080:8080 \
+  -v metatube-provider-go-data:/data \
+  -e METATUBE_AUTH_TOKEN='replace-with-a-random-token' \
+  ghcr.io/feewg/metatube-plex-custom-provider-go:latest
+```
+
+旧 Python Provider 镜像不再由 GitHub Actions 构建。
 
 ## 运行
 

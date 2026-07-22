@@ -60,17 +60,6 @@ docker run --rm -p 8080:8080 \
   metatube-provider
 ```
 
-GitHub Actions 会构建 `linux/amd64` 和 `linux/arm64` 镜像。Pull Request 只验证
-镜像能否成功构建；推送到 `main` 分支或推送以 `v` 开头的标签时，镜像会发布到
-GitHub Container Registry：
-
-```bash
-docker pull ghcr.io/feewg/metatube-plex-custom-provider:latest
-```
-
-例如推送 `v1.2.3` 标签时，还会发布 `v1.2.3`、`1.2.3` 和 `1.2` 镜像标签。
-如需匿名拉取，请在仓库所有者的 GitHub Packages 设置中把该 Package 设为 Public。
-
 ## 注册到 Plex
 
 需要 Plex Media Server 1.43.0 或更新版本。
