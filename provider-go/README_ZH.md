@@ -39,6 +39,31 @@ SDK 路径。也可以在仓库根目录本地构建：
 docker build -t metatube-provider-go ./provider-go
 ```
 
+### Docker Compose
+
+Compose 示例位于 [`docker-compose.yml`](./docker-compose.yml)。先基于
+[`.env.example`](./.env.example) 准备 `.env`，并替换其中的路径鉴权 token：
+
+```sh
+cd provider-go
+cp .env.example .env
+docker compose up -d
+```
+
+默认只发布到 `127.0.0.1:8080`。如果 Plex 在其他主机上并且需要直接访问该端口，
+把 `.env` 中的 `METATUBE_BIND_ADDRESS` 改为 `0.0.0.0`；公网部署仍建议通过 HTTPS
+反向代理访问。
+
+更新并重建容器：
+
+```sh
+docker compose pull
+docker compose up -d
+```
+
+Compose 会把 SQLite 数据保存到命名卷 `metatube-provider-go-data`，并配置健康检查、
+只读根文件系统和日志轮转。
+
 ## 配置
 
 - `METATUBE_HOST`：监听地址，默认 `127.0.0.1`

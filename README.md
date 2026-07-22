@@ -82,7 +82,10 @@ docker run --rm -p 8080:8080 \
   ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 ```
 
-The earlier Python provider image is no longer built by GitHub Actions.
+The earlier Python provider image is no longer built by GitHub Actions. A
+ready-to-run Compose example and environment template are available in
+[`provider-go/docker-compose.yml`](./provider-go/docker-compose.yml) and
+[`provider-go/.env.example`](./provider-go/.env.example).
 
 ## Run
 

@@ -1,0 +1,41 @@
+services:
+  provider-go:
+    image: ghcr.io/feewg/metatube-plex-custom-provider-go:${METATUBE_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "${METATUBE_BIND_ADDRESS:-127.0.0.1}:${METATUBE_PUBLISHED_PORT:-8080}:8080"
+    env_file:
+      - .env
+    environment:
+      METATUBE_HOST: 0.0.0.0
+      METATUBE_PORT: "8080"
+      METATUBE_DSN: /data/metatube-provider-go.db
+    volumes:
+      - metatube-provider-go-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          if [ -n "$${METATUBE_AUTH_TOKEN}" ]; then
+            health_path="/$${METATUBE_AUTH_PATH:-_metatube}/$${METATUBE_AUTH_TOKEN}/health";
+          else
+            health_path="/health";
+          fi;
+          wget -q -O /dev/null "http://127.0.0.1:8080$${health_path}"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  metatube-provider-go-data:

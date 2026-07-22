@@ -79,7 +79,9 @@ docker run --rm -p 8080:8080 \
   ghcr.io/feewg/metatube-plex-custom-provider-go:latest
 ```
 
-旧 Python Provider 镜像不再由 GitHub Actions 构建。
+旧 Python Provider 镜像不再由 GitHub Actions 构建。可直接使用的 Compose 示例和
+环境变量模板分别位于 [`provider-go/docker-compose.yml`](./provider-go/docker-compose.yml)
+和 [`provider-go/.env.example`](./provider-go/.env.example)。
 
 ## 运行
 
